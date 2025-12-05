@@ -6,6 +6,7 @@ import random
 from typing import Iterable, List, Dict, Any
 
 from pymixology.inventory.items import Ingredient
+from ..exceptions import RecommendationError
 
 
 def _normalize_ingredient(item: Any) -> Dict[str, Any]:
@@ -64,8 +65,16 @@ def find_cocktails_with_ingredients(target_ingredients: List[str], recipe_db: It
 
 
 def recommend_by_flavor(user_profile: Dict[str, int], recipe_db: Iterable[Dict[str, Any]]) -> List[str]:
-    """Match recipes against user flavor preferences."""
+    """Match recipes against user flavor preferences.
+    
+    Raises:
+        RecommendationError: If profile contains invalid values.
+    """
     scored = []
+    for key, val in user_profile.items():
+        if val < 0:
+            raise RecommendationError(f"Invalid profile value for {key}: {val}")
+
     for recipe in recipe_db:
         flavor_key = str(recipe.get("flavor", "")).lower()
         score = user_profile.get(flavor_key, 0)
@@ -76,8 +85,12 @@ def recommend_by_flavor(user_profile: Dict[str, int], recipe_db: Iterable[Dict[s
 
 
 def surprise_me(recipe_db: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
-    """Return a random cocktail dict."""
+    """Return a random cocktail dict.
+    
+    Raises:
+        RecommendationError: If no recipes are available.
+    """
     recipes = list(recipe_db)
     if not recipes:
-        raise ValueError("No recipes available.")
+        raise RecommendationError("No recipes available.")
     return random.choice(recipes)
