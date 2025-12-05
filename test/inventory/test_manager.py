@@ -1,6 +1,7 @@
 import unittest
 from pymixology.inventory.items import Ingredient, Spirit
 from pymixology.inventory import manager
+from pymixology.exceptions import InventoryError
 
 class TestManager(unittest.TestCase):
 
@@ -38,8 +39,8 @@ class TestManager(unittest.TestCase):
         self.assertEqual(len(self.inventory), 1)
         
         # Test Remove Non-existing
-        removed_fail = manager.remove_item(self.inventory, "Gold")
-        self.assertFalse(removed_fail)
+        with self.assertRaises(InventoryError):
+            manager.remove_item(self.inventory, "Gold")
         self.assertEqual(len(self.inventory), 1)
 
     def test_stock_logic(self):

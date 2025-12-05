@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import List
 
 from .items import Ingredient
+from ..exceptions import InventoryError
 
 
 def add_item(inventory_list: List[Ingredient], item_object: Ingredient) -> bool:
@@ -16,13 +17,17 @@ def add_item(inventory_list: List[Ingredient], item_object: Ingredient) -> bool:
 
 
 def remove_item(inventory_list: List[Ingredient], item_name: str) -> bool:
-    """Remove the first matching item by name."""
+    """Remove the first matching item by name.
+    
+    Raises:
+        InventoryError: If the item is not found in the inventory.
+    """
     target = item_name.lower().strip()
     for idx, item in enumerate(inventory_list):
         if item.name.lower() == target:
             del inventory_list[idx]
             return True
-    return False
+    raise InventoryError(f"Item '{item_name}' not found in inventory.")
 
 
 def check_stock(inventory_list: List[Ingredient], item_name: str) -> float:
