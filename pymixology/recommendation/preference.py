@@ -8,8 +8,16 @@ user_profile: Dict[str, int] = {}
 
 
 def set_flavor_profile(sweet: int, sour: int, bitter: int, strong: int) -> Dict[str, int]:
-    """Save a simple flavor profile."""
+    """Save a simple flavor profile.
+    
+    Raises:
+        ValueError: If any value is outside 0-10 range.
+    """
     global user_profile
+    for val, name in [(sweet, "sweet"), (sour, "sour"), (bitter, "bitter"), (strong, "strong")]:
+        if not (0 <= int(val) <= 10):
+            raise ValueError(f"{name} value must be between 0 and 10.")
+    
     user_profile = {
         "sweet": int(sweet),
         "sour": int(sour),
