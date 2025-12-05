@@ -6,12 +6,24 @@ import json
 from pathlib import Path
 from typing import Iterable, List, Dict, Any
 
+from ..exceptions import DataLoadError
+
 
 def load_recipes(filepath: str) -> List[Dict[str, Any]]:
-    """Load recipe data from a JSON file into a list of dicts."""
+    """Load recipe data from a JSON file into a list of dicts.
+    
+    Raises:
+        DataLoadError: If the file cannot be read or parsed.
+    """
     path = Path(filepath)
-    with path.open("r", encoding="utf-8") as f:
-        data = json.load(f)
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError as e:
+        raise DataLoadError(f"Recipe file not found: {filepath}") from e
+    except json.JSONDecodeError as e:
+        raise DataLoadError(f"Failed to parse recipe file: {e}") from e
+
     if not isinstance(data, list):
         raise ValueError("Recipe data must be a list of dicts.")
     return [_normalize_recipe(recipe) for recipe in data]
