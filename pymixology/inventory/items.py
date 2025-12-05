@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Union
 
+from ..exceptions import IngredientError
+
 
 class Ingredient:
     """Generic ingredient with quantity and value tracking."""
@@ -21,11 +23,15 @@ class Ingredient:
         return f"Name: {self.name}, Qty: {self.quantity}{value_part}"
 
     def use(self, amount: Union[int, float]) -> bool:
-        """Reduce quantity when stock is available."""
+        """Reduce quantity when stock is available.
+        
+        Raises:
+            IngredientError: If amount is invalid or insufficient stock.
+        """
         if amount <= 0:
-            return False
+            raise IngredientError("Amount to use must be positive.")
         if amount > self.quantity:
-            return False
+            raise IngredientError(f"Insufficient stock. Have {self.quantity}, need {amount}.")
         self.quantity -= amount
         return True
 
