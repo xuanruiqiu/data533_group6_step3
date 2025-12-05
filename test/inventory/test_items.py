@@ -1,5 +1,6 @@
 import unittest
 from pymixology.inventory.items import Ingredient, Spirit, Mixer
+from pymixology.exceptions import IngredientError
 
 class TestItems(unittest.TestCase):
     
@@ -35,13 +36,13 @@ class TestItems(unittest.TestCase):
         self.assertEqual(self.ingredient.current_value(), 5.0)
 
         # Test 3: use() method invalid (too much)
-        fail_success = self.ingredient.use(1000.0)
-        self.assertFalse(fail_success)
+        with self.assertRaises(IngredientError):
+            self.ingredient.use(1000.0)
         self.assertEqual(self.ingredient.quantity, 50.0)
         
         # Test 4: use() method invalid (negative)
-        neg_success = self.ingredient.use(-10.0)
-        self.assertFalse(neg_success)
+        with self.assertRaises(IngredientError):
+            self.ingredient.use(-10.0)
         
         # Additional check for info string
         self.assertIn("Sugar", self.ingredient.info())

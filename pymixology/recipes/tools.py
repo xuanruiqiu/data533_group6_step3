@@ -5,6 +5,8 @@ from __future__ import annotations
 import copy
 from typing import Dict, List, Any
 
+from ..exceptions import RecipeError
+
 _OZ_TO_ML = 29.5735
 
 
@@ -18,12 +20,16 @@ def calculate_abv(ingredients: List[Dict[str, float]]) -> float:
 
 
 def estimate_cost(ingredients: List[Dict[str, float]]) -> float:
-    """Estimate cost of a single cocktail based on bottle prices and usage."""
+    """Estimate cost of a single cocktail based on bottle prices and usage.
+    
+    Raises:
+        RecipeError: If bottle volume is invalid.
+    """
     cost = 0.0
     for item in ingredients:
         bottle_vol = item.get("bottle_vol", 0)
         if bottle_vol <= 0:
-            raise ValueError("Bottle volume must be greater than zero.")
+            raise RecipeError("Bottle volume must be greater than zero.")
         price_per_bottle = item.get("price_per_bottle", 0)
         used_vol = item.get("used_vol", 0)
         cost += (price_per_bottle / bottle_vol) * used_vol
@@ -31,7 +37,11 @@ def estimate_cost(ingredients: List[Dict[str, float]]) -> float:
 
 
 def unit_converter(amount: float, from_unit: str, to_unit: str) -> float:
-    """Convert volumes between ml and oz."""
+    """Convert volumes between ml and oz.
+    
+    Raises:
+        RecipeError: If unit is not supported.
+    """
     f_unit = from_unit.lower()
     t_unit = to_unit.lower()
     if f_unit == t_unit:
@@ -40,7 +50,7 @@ def unit_converter(amount: float, from_unit: str, to_unit: str) -> float:
         return amount * _OZ_TO_ML
     if f_unit == "ml" and t_unit == "oz":
         return amount / _OZ_TO_ML
-    raise ValueError("Unsupported unit conversion.")
+    raise RecipeError(f"Unsupported unit conversion: {from_unit} to {to_unit}")
 
 
 def scale_recipe(cocktail_dict: Dict[str, Any], servings: int) -> Dict[str, Any]:
