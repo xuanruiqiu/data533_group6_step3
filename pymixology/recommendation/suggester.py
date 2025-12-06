@@ -94,3 +94,5 @@ def surprise_me(recipe_db: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
     if not recipes:
         raise RecommendationError("No recipes available.")
     return random.choice(recipes)
+
+# Day 2 Update: Error handling review
