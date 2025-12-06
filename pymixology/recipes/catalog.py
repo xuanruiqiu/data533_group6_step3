@@ -93,3 +93,5 @@ def _format_ingredient(ingredient: Dict[str, Any]) -> str:
     if unit:
         return f"{amount_str} {unit} {name}"
     return f"{amount_str} {name}"
+
+# Day 2 Update: Error handling review
