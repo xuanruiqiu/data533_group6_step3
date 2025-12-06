@@ -47,3 +47,5 @@ def get_shopping_list(inventory_list: List[Ingredient], min_threshold: float) ->
 def total_value(inventory_list: List[Ingredient]) -> float:
     """Return the total estimated value of all inventory items."""
     return sum(item.current_value() for item in inventory_list)
+
+# Day 2 Update: Error handling review
